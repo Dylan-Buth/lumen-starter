@@ -6,20 +6,29 @@ LABEL application="lumen" \
 # Copy the application files to the container
 ADD . /var/www/html
 
+# Get the latest composer
+ADD https://getcomposer.org/composer.phar /usr/bin/composer
+
 WORKDIR /var/www/html
 
 # Install Composer
 RUN apt-get update && apt-get install -y git zip unzip \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && php -r "readfile('https://getcomposer.org/installer');" > composer-setup.php \
 
-    # this hash needs to be updated with each composer version release
-    && php -r "if (hash('SHA384', file_get_contents('composer-setup.php')) === '92102166af5abdb03f49ce52a40591073a7b859a86e8ff13338cf7db58a19f7844fbc0bb79b2773bf30791e935dbd938') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
-    && php composer-setup.php --install-dir=/usr/bin --filename=composer \
-    && php -r "unlink('composer-setup.php');" \
+     # chown a directory up so that the .composer directory that's created will be included
+    && chmod 700 /usr/bin/composer \
+    && chown -R www-data:www-data /var/www/ /usr/bin/composer
 
-    # parallel dependency installation
-    && composer global require hirak/prestissimo \
+USER www-data
+# parallel dependency installation
+RUN composer global require hirak/prestissimo \
 
     # production-ready dependencies
-    && composer install  --no-interaction --no-dev --prefer-dist
+    && composer install  --no-interaction --no-dev --prefer-dist \
+
+    # cleanup from composer
+    && rm -r /var/www/.composer
+
+# www-data doesn't have permission to remove composer
+USER root
+RUN rm /usr/bin/composer
