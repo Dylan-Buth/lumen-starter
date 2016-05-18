@@ -1,9 +1,15 @@
 # This container should be used for any/all CLI processes
 # including cron, queues, etc.
 FROM realpage/php:7.0-fpm
-LABEL application="lumen" \
+LABEL application="lumen-starter" \
       com.realpage.php.version="7.0" \
       com.realpage.php.type="cli"
+
+# Files are added as 1001:1001 in CI, so we'll change
+# www-data to be that user
+RUN usermod -u 1001 www-data \
+        && groupmod -g 1001 www-data \
+        && usermod -g 1001 www-data
 
 # Copy the application files to the container
 ADD . /var/www/html
