@@ -43,6 +43,7 @@ before_install:
   - docker-compose ps
 install:
   # Install dev php dependencies
+  - docker exec -it -u=www-data $(docker-compose ps -q fpm) ls -latr
   - docker exec -it -u=www-data $(docker-compose ps -q fpm) composer install --no-interaction --prefer-dist
 script:
   # Ensure phpcs triggers a failing build
