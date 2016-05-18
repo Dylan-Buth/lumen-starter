@@ -24,11 +24,4 @@ USER www-data
 RUN composer global require hirak/prestissimo \
 
     # production-ready dependencies
-    && composer install  --no-interaction --no-dev --prefer-dist \
-
-    # cleanup from composer
-    && rm -r /var/www/.composer
-
-# www-data doesn't have permission to remove composer
-USER root
-RUN rm /usr/bin/composer
+    && composer install  --no-interaction --no-dev --prefer-dist
