@@ -10,8 +10,8 @@ ADD . /var/www/html
 
 WORKDIR /var/www/html
 
-# Install Composer dependencies
-RUN apt-get update && apt-get install -y git zip unzip \
+# Install dependencies
+RUN apt-get update && apt-get install -y git zip unzip cron \
     && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Install Composer
