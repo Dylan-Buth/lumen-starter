@@ -12,7 +12,10 @@ WORKDIR /var/www/html
 
 # Install dependencies
 RUN apt-get update && apt-get install -y git zip unzip cron \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+
+    # Schedule in the crontab
+#    && echo "*       *       *       *       *       php /var/www/html/artisan schedule:run" > /etc/crontabs/www-data
 
 # Install Composer
 RUN php /var/www/html/infrastructure/install_composer.php

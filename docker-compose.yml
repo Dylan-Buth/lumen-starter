@@ -32,3 +32,11 @@ services:
     image: realpage/dredd:1.0
     volumes_from:
       - fpm
+  cli:
+    build:
+      context: .
+      dockerfile: infrastructure/cli/Dockerfile
+    image: realpagepropertyos/property-data-verification:cli
+    env_file: .env
+    volumes:
+      - ./:/var/www/html
